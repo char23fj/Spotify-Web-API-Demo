@@ -1,0 +1,116 @@
+<head>
+ <title>Getting a Playlist and Its Tracks</title>
+ <link rel="stylesheet" href="spotStyle.css">
+ <div id="headspan">
+  <h1>Getting a Playlist and Its Tracks</h1>
+  <a style="margin-left: 100px" href="/createadd" class="btn btn-primary btn-medium btn-block">
+   Next page: Creating and Adding
+  </a>
+ </div>
+</head>
+<body>
+ <h3>Next we'll choose a playlist and get the JSON objects representing its tracks.</h3>
+ <h4>Here's what that request looks like:</h4>
+
+ <div id="codiv">
+  <pre><code>curl -X GET "https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}"</code></pre>
+ </div>
+
+ <section>
+  <p>Both of our headers are the same as in the Get a User's Playlists request.  We just need to 
+insert a playlist ID, so we'll fill in that field with "0e1qHvWEuKNWqNq1ZDTaT3" (which we obtained 
+in the last section) to get the information for Curtis's playlist "Random Tunes."</p>
+ </section>
+ <h4>This will return the following (I've abbreviated it quite a bit more this time)</h4>
+ <div id="codiv">
+  <pre><code>{
+  "collaborative": false,
+  "description": null,
+  "external_urls": {...},
+  "followers": {...},
+  "href": "https://api.spotify.com/v1/users/cbigby235/playlists/0e1qHvWEuKNWqNq1ZDTaT3",
+  "id": "0e1qHvWEuKNWqNq1ZDTaT3",
+  "images": [],
+  "name": "Random Tunes",
+  "owner": {...},
+  "public": true,
+  "snapshot_id": "B9kw4cnXMS/XN0xIdy/KqgbWfe+XhYw6fONoUOrf0LUHH4V4UaqJcrHZyvCz060K",
+  "tracks": {
+    "href": "https://api.spotify.com/v1/users/cbigby235/playlists/0e1qHvWEuKNWqNq1ZDTaT3/tracks?offset=0&limit=100",
+    "items": [
+      {...}
+    ],
+    "limit": 100,
+    "next": null,
+    "offset": 0,
+    "previous": null,
+    "total": 17
+  },
+  "type": "playlist",
+  "uri": "spotify:user:cbigby235:playlist:0e1qHvWEuKNWqNq1ZDTaT3"
+}
+  </code></pre>
+ </div>
+ <section>
+  <p>In the above, where you see "{...}", I've redacted some information.  Some of it we're not interested in, and 
+some is track information, which we'll cover with the next endpoint call.  You'll see, however, that it exists within 
+the above call, in an array, which would be the <code>tracks.items[]</code> attribute of the object.  If we just want 
+the track items, it's probably more convenient to call the Get a Playlist's Tracks endpoint.</p>
+ </section>
+
+<h4>So here's the Get a Playlist's Tracks request;</h4>
+ <div id="codiv">
+  <pre><code>curl -X GET "https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}"</code></pre>
+ </div>
+
+<h4>And here's what it returns:</h4>
+
+ <div id="codiv">
+  <pre><code>{
+  "href" : "https://api.spotify.com/v1/users/cbigby235/playlists/0e1qHvWEuKNWqNq1ZDTaT3/tracks?offset=0&limit=100",
+  "items" : [ {
+    "added_at" : "2017-05-22T14:26:03Z",
+    "added_by" : {...},
+    "is_local" : false,
+    "track" : {
+      "album" : {...},
+      "artists" : [ {...} ],
+      "available_markets" : [ "CA", "US" ],
+      "disc_number" : 1,
+      "duration_ms" : 186440,
+      "explicit" : false,
+      "external_ids" : {...},
+      "external_urls" : {...},
+      "href" : "https://api.spotify.com/v1/tracks/1w8gsT5RBrFfTrLYhDRJIk",
+      "id" : "1w8gsT5RBrFfTrLYhDRJIk",
+      "name" : "Surf Wax America",
+      "popularity" : 45,
+      "preview_url" : null,
+      "track_number" : 6,
+      "type" : "track",
+      "uri" : "spotify:track:1w8gsT5RBrFfTrLYhDRJIk"
+    }
+  }, {...   //Several more items...
+  },
+{...        //Last item
+  } ],      //End of "items" array
+  "limit" : 100,
+  "next" : null,
+  "offset" : 0,
+  "previous" : null,
+  "total" : 17
+}</code></pre>
+ </div>
+
+ <section>
+  <p>If you compare this closely with the items above, when we call this endpoint it returns the <code>tracks</code> 
+attribute of the playlist object that was returned by the previous call (skipping the general playlist info at the 
+top).  This attribute contains the <code>items</code> array, which holds the individual tracks themselves.</p>
+ </section>
+
+<h4>Let's head to the next section to learn about creating and filling playlists:</h4>
+
+  <a href="/createadd" class="btn btn-primary btn-medium btn-block">Next page: Creating and Adding</a>
+
+</body>
+

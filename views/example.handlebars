@@ -1,0 +1,171 @@
+<head>
+ <title>Example of Endpoint Usage</title>
+ <link rel="stylesheet" href="spotStyle.css">
+ <div id="headspan">
+  <h1>Example of Endpoint Usage</h1>
+  <a style="margin-left: 100px" href="/auth.html" class="btn btn-primary btn-medium btn-block">
+   Next page: Try It Out!
+  </a>
+ </div>
+</head>
+<body>
+ <h3>Here's some example code for applying a couple of the endpoints we've discussed.</h3>
+
+<section>
+  <p>First we allow the user to log in by using 
+<a href="https://github.com/spotify/web-api-auth-examples/tree/master/implicit_grant">this app 
+shared on GitHub</a>.  What happens here is that after the user logs in, the page redirects to 
+Spotify's website for authorization.  After the user enters credentials, an "access token" is 
+passed that can be utilized temporarily by the app (within the proper scopes).  The whole process 
+is a bit too complex to cover in this demonstration, but you can read all about the different 
+authorization flows <a href="https://developer.spotify.com/web-api/authorization-guide/">here</a>.  
+Anyway, the next section will make a call to the Get a User's Playlists endpoint first.  A small 
+(and crude looking) section will show the playlist names and buttons to get their songs.  Upon 
+pressing the button, song titles and artists are listed below.
+  </p>
+</section>
+
+ <h4>Here is how it's done:</h4>
+
+ <div id="codiv">
+  <pre><code>/*Function to display playlists and their tracks on a page*/
+function getPL(token, id){
+  //Create our Get Playlists button
+  var button1 = document.createElement('button');
+  button1.textContent = "Get Playlists";
+  button1.class = "btn btn-primary btn-medium btn-block";
+  button1.style = "top-margin: 20px";
+  document.getElementById('bDiv').appendChild(button1);
+
+  //Attach a click listener to this button to make an http request
+  button1.addEventListener('click', function(event){
+  var req = new XMLHttpRequest();
+  var url2 = 'https://api.spotify.com/v1/users/' + id + '/playlists';
+  var lists = [];
+  var songs = [];
+  req.open('GET', url2, true);
+
+  //Request headers
+  req.setRequestHeader('Accept', 'application/json');
+  req.setRequestHeader('Authorization', 'Bearer ' + token);
+
+  req.addEventListener('load', function(event){
+    if(req.status >= 200 && req.status < 400){
+
+      //Parse response text (list of playlists)
+      var plObject = JSON.parse(req.responseText);
+      //Make a div and a table for the results
+      var tdiv = document.getElementById('tDiv');
+      var table = document.createElement('table');
+      tdiv.appendChild(table);
+
+      //Put name & id for each playlist in an array
+      for (var x = 0; x < plObject.items.length; x++)
+      {
+        console.log(plObject.items.length);
+        lists[x] = {
+          'id': plObject.items[x].id,
+          'name': plObject.items[x].name
+          };
+
+        //Make a 2 x (length) table for playlist names and buttons
+        var tRow = document.createElement('tr');
+        table.appendChild(tRow);
+        var tCell1 = document.createElement('td');
+        tRow.appendChild(tCell1);
+        var tCell2 = document.createElement('td');
+        tRow.appendChild(tCell2);
+        tCell1.textContent = lists[x].name;
+        var btn = document.createElement('button');
+
+        tCell2.appendChild(btn);
+        btn.textContent = 'Get Songs';
+        btn.value = lists[x].id;
+
+        //Add an event listener for each button; function defined below
+        btn.addEventListener('click', showSongs(lists[x].id));
+
+        /*Function that makes a request to get a playlist's tracks, loops through
+          all tracks, and adds name/artist to a table */
+        function showSongs(pID){
+          return function(event){
+            console.log(pID);
+            var req = new XMLHttpRequest();
+            var url3 = 'https://api.spotify.com/v1/users/' + id + '/playlists/';
+            url3 += pID + '/tracks';
+            var songs = [];
+
+            req.open('GET', url3, true);
+            req.setRequestHeader('Accept', 'application/json');
+            req.setRequestHeader('Authorization', 'Bearer ' + token);
+
+            req.addEventListener('load', function(event){
+              if(req.status >= 200 && req.status < 400){
+
+                //Parse the tracks object, create div/table
+                var trObject = JSON.parse(req.responseText);
+                var table2 = document.createElement('table');
+                var tdiv2 = document.getElementById('tDiv2');
+                tdiv2.appendChild(table2);
+
+                //Loop through items array in tracks object
+                for (var a = 0; a < trObject.items.length; a++)
+                {
+                  //Create objects with only the items we want
+                  var track = trObject.items[a].track;
+                  songs[a] = {
+                    'id': track.id,
+                    'name': track.name,
+                    'artist': track.artists[0].name
+                    };
+
+                  //Create another table to list tracks/artists
+                  var tRow1 = document.createElement('tr');
+                  table2.appendChild(tRow1);
+                  var tCell3 = document.createElement('td');
+                  tRow1.appendChild(tCell3);
+                  var tCell4 = document.createElement('td');
+                  tRow1.appendChild(tCell4);
+                  tCell3.textContent = track.name;
+                  tCell3.width = "500px";
+                  tCell4.textContent = track.artists[0].name;
+                  tCell4.width = "500px";
+                }
+              }
+              else {
+                console.log('Error in network request: ' + req.statusText);
+              }});
+            req.send(null);
+
+            event.preventDefault();
+          };
+        }
+      }
+    }
+    else {
+      console.log('Error in network request: ' + req.statusText);
+    }});
+    req.send(null);
+
+    event.preventDefault();    
+  });
+}</code></pre>
+ </div>
+
+<section>
+  <p>This is a very simple use of only two of the endpoints we examined, but you might imagine 
+what else we could do with the data we're gathering here.  For example, you could make a few 
+quick endpoint calls to get all songs from all of a user's playlists, and allow the user to 
+quickly select multiple items and place them into an array, which can be added all at once to 
+a new playlist.  Or maybe you could take the JSON attributes of track objects and combine them 
+with user-defined attributes, which would allow you to store and separate them based on those 
+particular elements.</p>
+</section>
+
+<h4>Anyway, this marks the end of the presentation.  Thanks for reading.  Now let's try our 
+little program out:</h4>
+
+  <a href="/auth.html" class="btn btn-primary btn-medium btn-block">
+Next page: Try It Out!</a>
+
+</body>

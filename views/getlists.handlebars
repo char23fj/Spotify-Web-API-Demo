@@ -1,0 +1,143 @@
+<head>
+ <title>Getting a User's Playlists</title>
+ <link rel="stylesheet" href="spotStyle.css">
+ <div id="headspan">
+  <h1>Getting Your (current user's) Playlists</h1>
+  <a style="margin-left: 100px" href="/gettracks" class="btn btn-primary btn-medium btn-block">Next page: Getting a Playlist and its Tracks</a>
+ </div>
+</head>
+<body>
+ <h3>The first endpoint we'll explore will return a list of a particular user's playlists.</h3>
+ <h4>First, it requires the user to log in.</h4>
+ <section>
+  <p>...We'll come back to that later.  For now, let's see an example using a fake person's real account.  
+So I've logged my friend Curtis Bigby into spotify using his account ID, cbigby235.</p>
+  <iframe src="https://open.spotify.com/follow/1/?uri=spotify:user:cbigby235&size=detail&theme=light">
+  </iframe>
+  <p>Check out <a href="https://developer.spotify.com/technologies/widgets/spotify-follow-button/">this widget</a> ^ as well!</p>
+ </section>
+
+ <h4>We'll make a GET request to the relevant endpoint.  Here's what it looks like in the format given on Spotify's site:</h4>
+ <div id="codiv">
+  <pre><code>curl -X GET "https://api.spotify.com/v1/me/playlists"
+-H "Accept: application/json"
+-H "Authorization: Bearer BQD5RYcHDVgfL..."(+ the rest of very long authorization string that I'm hiding from you)</code></pre>
+ </div>
+
+ <section>
+  <p>A little bit of explanation is warranted here.  What we're doing is making a cURL GET request.  So after the 
+GET comes the URL of the site where the information we're trying to obtain is stored.  Side note: the "me" portion 
+can also be substituted with the name of the user, so instead of searching for the active user's playlists, we can 
+make a request to https://api.spotify.com/v1/cbigby235/playlists, for example.  This still requires login information.  
+But anyway, after the URL come the headers.  We're after JSON data here, so the first header's name will be "Accept", 
+and its value is "application/json".  The second header, named "Authorization", will have the user's authorization 
+token as its value.  This is obtained after the server processes a login request, and it is a very long string.</p>
+ </section>
+
+ <h4>On second thought, let's translate that cURL stuff to something a little more familiar:</h4>
+
+ <div id="codiv">
+  <pre><code>var req = new XMLHttpRequest();
+var url = 'https://api.spotify.com/v1/users/cbigby235/playlists';
+
+req.open('GET', url, true);
+req.setRequestHeader('Accept', 'application/json');
+req.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+
+req.addEventListener('load', function(event){
+  if(req.status >= 200 && req.status < 400){
+
+    console.log(req.responseText);
+  }
+  else {
+    console.log('Error in network request: ' + req.statusText);
+  }});
+req.send(null);
+
+event.preventDefault();</code></pre>
+ </div>
+
+<h4>The result is going to be a hefty amount of JSON data, like so:</h4>
+
+ <div id="codiv">
+  <pre><code>{
+  "href": "https://api.spotify.com/v1/users/cbigby235/playlists?offset=0&limit=20",
+  "items": [
+    {
+      "collaborative": false,
+      "external_urls": {
+        "spotify": "http://open.spotify.com/user/cbigby235/playlist/0e1qHvWEuKNWqNq1ZDTaT3"
+      },
+      "href": "https://api.spotify.com/v1/users/cbigby235/playlists/0e1qHvWEuKNWqNq1ZDTaT3",
+      "id": "0e1qHvWEuKNWqNq1ZDTaT3",
+      "images": [
+        {
+          "height": 640,
+          "url": "https://mosaic.scdn.co/640/0e9c778a26796b85b75514488f4a2cf1e6c4e2addab2703d8e0c0c91a7658668801a0aa3685c8eeb68ed7b5adcba1a1e272a7e78cd88240cf58a1edb64c84961f448d0b4015b62d3af4344889a97006f",
+          "width": 640
+        },
+        {...},
+        {...},
+      ],
+      "name": "Random Tunes",
+      "owner": {
+        "external_urls": {
+          "spotify": "http://open.spotify.com/user/cbigby235"
+        },
+        "href": "https://api.spotify.com/v1/users/cbigby235",
+        "id": "cbigby235",
+        "type": "user",
+        "uri": "spotify:user:cbigby235"
+      },
+      "public": true,
+      "snapshot_id": "B9kw4cnXMS/XN0xIdy/KqgbWfe+XhYw6fONoUOrf0LUHH4V4UaqJcrHZyvCz060K",
+      "tracks": {
+        "href": "https://api.spotify.com/v1/users/cbigby235/playlists/0e1qHvWEuKNWqNq1ZDTaT3/tracks",
+        "total": 17
+      },
+      "type": "playlist",
+      "uri": "spotify:user:cbigby235:playlist:0e1qHvWEuKNWqNq1ZDTaT3"
+    },
+
+    {
+      "collaborative": false,
+      "external_urls": 
+        {...},
+      "href": "https://api.spotify.com/v1/users/cbigby235/playlists/5uDrbR8StuPvzcqOXveyQV",
+      "id": "5uDrbR8StuPvzcqOXveyQV",
+      "images": [
+        {...},
+      ],
+      "name": "Some More Tunes",
+      "owner":  
+        {...},
+      "public": true,
+      "snapshot_id": "Hxm5VChasF6Otfj0XjCwEO2I1sp8PytJsczhg23mmJYoTTBs16jKIRGj89pxbQIa",
+      "tracks":
+        {...},
+      "type": "playlist",
+      "uri": "spotify:user:cbigby235:playlist:5uDrbR8StuPvzcqOXveyQV"
+    }
+  ],
+  "limit": 20,
+  "next": null,
+  "offset": 0,
+  "previous": null,
+  "total": 2
+}</code></pre>
+ </div>
+
+ <section>
+ <p>Curtis has two playlists on Spotify, and wherever you see a bracketed ellipsis <code>{...}</code>, the 
+information has been abbreviated to annoy you a little bit less with the redundancy.  An important item in 
+the next section is going to be the playlist ID.  The one for "Random Tunes" is on the tenth line and looks 
+like this:</p>
+ </section>
+
+ <div id="codiv">
+  <pre><code>"id": "0e1qHvWEuKNWqNq1ZDTaT3",</code></pre>
+ </div>
+ <h4>So let's use this playlist ID to get a playlist and then get its tracks:</h4>
+ <a href="/gettracks" class="btn btn-primary btn-medium btn-block">Next page: Getting a Playlist and its Tracks</a>
+</body>
+

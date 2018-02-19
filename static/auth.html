@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Authorization page</title>
+    <link rel="stylesheet" href="spotStyle.css">
+    <style type="text/css">
+      #login, #loggedin {
+        display: none;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+      }
+      dl {
+        width: 100%;
+        float: left;
+        padding: 0;
+        margin: 0
+      }
+      dl dt {
+        float: left;
+        width: 25%;
+        padding: 0;
+        margin: 0;
+      }
+      dl dd {
+        float: left;
+        width: 75%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div id="login">
+        <h1>First, let's log in</h1>
+        <button id="login-button" class="btn btn-primary">Log in with Spotify</button>
+      </div>
+      <div id="loggedin">
+        <div id="user-profile">
+        </div>
+        <div id="oauth">
+        </div>
+      </div>
+    </div>
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <h1 id="dNameH">Logged in as {{display_name}}</h1><br />
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object" width="150" src="{{images.0.url}}" />
+        </div>
+        <div class="media-body">
+          <dl class="dl-horizontal">
+            <dt>Display name</dt><dd class="clearfix" id="dNameD">{{display_name}}. </dd>
+            <dt>Id</dt><dd>{{id}}</dd>
+            <dt>Email</dt><dd>{{email}}</dd>
+            <dt>Spotify URI</dt><dd><a href="{{external_urls.spotify}}">{{external_urls.spotify}}</a></dd>
+            <dt>Link</dt><dd><a href="{{href}}">{{href}}</a></dd>
+            <dt>Profile Image</dt><dd class="clearfix"><a href="{{images.0.url}}">{{images.0.url}}</a></dd>
+            <dt>Country</dt><dd>{{country}}</dd>
+          </dl>
+        </div>
+      </div>
+      <div height="1000px"></div>
+      <div id='bDiv' style = "position: relative, margin-top: 100px"></div>
+      <div id='tDiv' style = "position: relative, margin-top: 100px"></div>
+      <div id='tDiv2' style = "position: relative, margin-top: 100px"></div>      
+    </script>
+    <script id="oauth-template" type="text/x-handlebars-template">
+      <h2>oAuth info</h2>
+      <dl class="dl-horizontal">
+        <dt>Access token</dt><dd class="text-overflow">{{access_token}}</dd>
+      </dl>
+    </script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0-alpha.1/handlebars.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="demo.js"></script>
+</html>

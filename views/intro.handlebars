@@ -1,0 +1,48 @@
+<head>
+ <title>Spotify Playlist Endpoints Walkthrough</title>
+ <link rel="stylesheet" href="spotStyle.css">
+ <div id="headspan">
+ <h1>Spotify Playlist Endpoints Walkthrough</h1>
+  <a style="margin-left: 100px" href="/getlists" class="btn btn-primary btn-medium btn-block">Next page: Getting a User's Playlists</a>
+ </div>
+</head>
+<body>
+ <h3>In this walkthrough, we will explore Spotify's Web API and its endpoints that relate to playlist functionality.</h3>
+ <h4>Here are some of the options we will look at:</h4>
+
+ <section>
+  <ul>
+   <li>Getting a list of playlists for a user</li>
+   <li>Getting the details and tracks from a playlist</li>
+   <li>Creating a new playlist</li>
+   <li>Adding songs to a playlist</li>
+  </ul>
+ </section>
+
+ <h4>At the end, we'll wrap up by showing how we can apply these endpoints in some javascript code.</h4>
+
+ <h3>...First, a note on what you need to start out:</h3>
+
+ <section>
+ <p>You'll want to refer to Spotify's <a href="https://developer.spotify.com/web-api/user-guide/">Web API User Guide</a> 
+and take a look at their <a href="https://developer.spotify.com/web-api/tutorial/">Web API Tutorial</a> for more 
+comprehensive information on getting started, but in summary, you'll need to do the following:
+  <ul>
+   <li>Set up a Spotify account (free or premium) at <a href="https://www.spotify.com/us/">spotify.com</a>.</li>
+   <li>Register your app at <a href="https://developer.spotify.com/my-applications">developer.spotify.com</a>.</li>
+   <li>Obtain your client ID and secret key from the above Spotify Developer website.</li>
+   <li>Set up your server/environment (example steps are covered in Spotify's tutorial).</li>
+  </ul>
+</p>
+ </section>
+
+ <h4>We'll briefly cover login/authorization for endpoints that get and modify user data, but the tutorial has more 
+information on that.  It also points you to a <br />helpful <a href="https://github.com/spotify/web-api-auth-examples">
+GitHub repository</a> containing some example code for covering user authorization (which I've borrowed for a later 
+demonstration).</h4>
+
+<h3>Let's get started with retrieving playlists for a Spotify user:</h3>
+
+  <a href="/getlists" class="btn btn-primary btn-medium btn-block">Next page: Getting a User's Playlists</a>
+</body>
+

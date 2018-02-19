@@ -1,0 +1,147 @@
+<head>
+ <title>Creating a Playlist and Adding Tracks</title>
+ <link rel="stylesheet" href="spotStyle.css">
+ <div id="headspan">
+  <h1>Creating a Playlist and Adding Tracks</h1>
+  <a style="margin-left: 100px" href="/example" class="btn btn-primary btn-medium btn-block">
+   Next page: Endpoints In Action
+  </a>
+ </div>
+</head>
+<body>
+ <h3>The last two endpoints we'll explore are for creating a playlist and adding tracks to it.</h3>
+
+<section>
+  <p>These will both be POST requests.  We'll have to send some information in the request body, and the 
+<code>'Accept': 'application/json'</code> header will change to <code>'Content-Type': 'application/json'</code>.
+  </p>
+</section>
+
+ <h4>Here is the request for making a new playlist:</h4>
+
+ <div id="codiv">
+  <pre><code>curl -X POST "https://api.spotify.com/v1/users/{user_id}/playlists"
+
+//Post body:
+{
+  "description": /*Insert description here*/,
+  "public": /*True or false*/,
+  "name": /*Insert playlist name*/
+}</code></pre>
+ </div>
+
+<section>
+  <p>This requires one of two <a href="https://developer.spotify.com/web-api/using-scopes/">
+authorization scopes</a> -- <code>playlist-modify-public</code> or <code>playlist-modify-private</code> -- 
+depending on whether you want to create a public playlist or a private one.  These scope arguments will be 
+entered with the authentication request, and the user will be informed of the information that is being 
+accessed and manipulated.</p>
+</section>
+
+<h4>Let's take a look at how we might enter this request in javascript:</h4>
+
+ <div id="codiv">
+  <pre><code>var req = new XMLHttpRequest();
+var details = {
+  "description": "Songs to rock out to while making an app with the Spotify API",
+  "public": true,
+  "name": "Product of a POST request"
+};
+
+var url = https://api.spotify.com/v1/users/cbigby235/playlists;
+
+req.open('POST', url, true);
+req.setRequestHeader('Content-Type', 'application/json');
+req.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+req.addEventListener('load', function(event){
+  if(req.status >= 200 && req.status < 400){
+    var newList = JSON.parse(req.responseText);
+
+    console.log(newList.id + " " + newList.name);
+
+  else {
+    console.log('Error in network request: ' + req.statusText);
+  }});
+req.send(JSON.stringify(details));</code></pre>
+ </div>
+
+ <section>
+  <p>The response body will contain a JSON object representing the new created playlist.  The above code 
+<code>console.log(newList.id + " + newList.name);</code> will output "2kML6Yt2ZupHGDJD6QSRcs Product of a 
+POST Request".</p>
+ </section>
+
+<h4>Now that we've got the ID for our new playlist, let's add some tracks to it with this endpoint:</h4>
+
+ <div id="codiv">
+  <pre><code>curl -X POST "https://api.spotify.com/v1/users/{user_id}/playlists/{playlist_id}/tracks"
+
+//Query or request body data
+uris=spotify:track:{trackID}       //If only one track
+uris=spotify:track:{trackID},spotify:track:{trackID}    //Multiple tracks are separated by a comma
+
+position={position index}   //0-playlist size</code></pre>
+ </div>
+
+ <section>
+  <p>This one carries a few different options.  First, the position parameter can be omitted, 
+in which case the track will be added to the end of the playlist.  Also, either of the parameters 
+for this request can be passed in a query or in the request body.  In this case, when adding multiple 
+tracks, the URIs should be separated by a comma and placed in an array.</p>
+ </section>
+ <h4>Passing both arguments in the request body looks like this: </h4>
+ <div id="codiv">
+  <pre><code>{"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh",
+"spotify:track:1301WleyT98MSxVHPZCA6M"], "position": 3}</code></pre>
+ </div>
+ <section>
+  <p>As with creating a playlist, we need a scope of either <code>playlist-modify-public</code> or 
+<code>playlist-modify-private</code>, depending on whether the playlist we are modifying is classified 
+as public or private.</p>
+ </section>
+
+<h4>Our code for this request would look similar to the above, with some modifications.  Let's try it 
+with query data instead of a request body:
+</h4>
+ <div id="codiv">
+  <pre><code>var req = new XMLHttpRequest();
+
+var url = 'https://api.spotify.com/v1/users/cbigby235/playlists';
+
+//The ID of our newly created playlist
+var pID = '2kML6Yt2ZupHGDJD6QSRcs';
+
+//Add the playlist ID
+url += '/' + pID;
+
+//Two track URIs are added for the query data (note the '%3A' replacing the colons above)
+url += '?uris=spotify%3Atrack%3A1ACL4gDGLOjMN8XrXQvmSt,spotify%3Atrack%3A1msykqPE0qoZig4nb9khI0';
+
+req.open('POST', url, true);
+... //Rest of the stuff that's shown above
+req.send(null);</code></pre>
+ </div>
+
+ <section>
+  <p>The two added tracks above are "Chicken Monkey Duck" by Mike Phirman and "Little Red Rooster" by 
+Sam Cooke.  The response body only gives a "snapshot_id", which is a long string.  We can take a look 
+at the playlist in the Web App, however, by finding the link to it in the response data that was 
+generated when we created it.  Here it is: 
+<a href="https://open.spotify.com/user/cbigby235/playlist/2kML6Yt2ZupHGDJD6QSRcs">
+https://open.spotify.com/user/cbigby235/playlist/2kML6Yt2ZupHGDJD6QSRcs</a></p>
+ </section>
+
+<img style="margin-left: 100px" src="postpic.jpg">
+
+<h4>For more information, check out Spotify's pages for the 
+<a href="https://developer.spotify.com/web-api/create-playlist/">Create a Playlist</a> and 
+<a href="https://developer.spotify.com/web-api/add-tracks-to-playlist/">Add tracks to a Playlist</a> 
+endpoints.</h4>
+
+<h4>But if you're ready, let's move on to an example of some of the stuff we've covered: </h4>
+
+  <a href="/example" class="btn btn-primary btn-medium btn-block">
+Next page: Endpoints in Action</a>
+
+</body>
+
